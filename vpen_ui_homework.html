@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Homework Module</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Segoe UI", sans-serif;
+        background-color: #f0f2f5;
+        margin: 0;
+        padding: 0;
+      }
+      header {
+        background-color: #1a73e8;
+        color: white;
+        padding: 15px 30px;
+      }
+      nav ul {
+        display: flex;
+        gap: 30px;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      nav li {
+        cursor: pointer;
+        font-weight: bold;
+      }
+      .container {
+        padding: 40px 30px;
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+      section {
+        background-color: white;
+        border-radius: 10px;
+        padding: 20px 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      }
+      h2 {
+        color: #1a73e8;
+      }
+      textarea {
+        width: 100%;
+        min-height: 80px;
+        padding: 10px;
+        margin-top: 10px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 15px;
+      }
+      button {
+        margin-top: 10px;
+        padding: 10px 16px;
+        background-color: #1a73e8;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #1558b0;
+      }
+      .feedback {
+        margin-top: 10px;
+        padding: 12px;
+        border-left: 4px solid #1a73e8;
+        background-color: #e8f0fe;
+        border-radius: 4px;
+      }
+      .badge {
+        display: none;
+        align-items: center;
+        gap: 10px;
+        margin-top: 16px;
+        background-color: #e6f4ea;
+        padding: 12px 16px;
+        border-radius: 8px;
+        border-left: 4px solid #34a853;
+        animation: fadeIn 0.5s ease-in-out;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .steps .step {
+        padding: 10px;
+        border-radius: 6px;
+        margin-top: 10px;
+      }
+      .steps .correct {
+        background-color: #e6f4ea;
+        border-left: 4px solid #34a853;
+      }
+      .steps .incorrect {
+        background-color: #fce8e6;
+        border-left: 4px solid #d93025;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <ul>
+          <li onclick="navigate('vpen_ui_homepage.html')">Home</li>
+          <li onclick="navigate('vpen_ui_annotation.html')">Annotations</li>
+          <li onclick="navigate('review_module.html')">Review</li>
+          <li onclick="showSignOutModal()">Sign Out</li>
+        </ul>
+      </nav>
+    </header>
+    <div class="container">
+      <section>
+        <h2>Solution Pathway Tracing</h2>
+        <textarea id="solution"></textarea>
+        <button onclick="evaluateSolution()">Evaluate Steps</button>
+        <div class="steps" id="solution-feedback"></div>
+      </section>
+      <section>
+        <h2>Homework Reflection Bonus</h2>
+        <textarea
+          placeholder="Reflect on your homework experience..."
+          id="reflectionInput"
+        ></textarea>
+        <button onclick="submitReflection()">Submit Reflection</button>
+        <div class="badge" id="reflectionResponse">
+          <span style="font-size: 24px">🏅</span>
+          <div><strong>Reflection Badge</strong><br />+30 XP</div>
+        </div>
+      </section>
+    </div>
+
+    <div
+      id="signOutModal"
+      class="modal"
+      style="
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.4);
+      "
+    >
+      <div
+        class="modal-content"
+        style="
+          background: #fff;
+          padding: 20px;
+          border-radius: 8px;
+          max-width: 300px;
+          margin: 20% auto;
+          text-align: center;
+        "
+      >
+        <h4>Your account has been signed out.</h4>
+        <button onclick="closeSignOutModal()">Close</button>
+      </div>
+    </div>
+
+    <script>
+      function navigate(page) {
+        document.body.classList.add("fade-out");
+        setTimeout(() => {
+          window.location.href = page;
+        }, 400);
+      }
+      function evaluateSolution() {
+        const feedback = document.getElementById("solution-feedback");
+        feedback.innerHTML = `
+        <div class='step correct'>Step 1: Identify coefficients — a = 1, b = -3, c = 2 ✔</div>
+        <div class='step incorrect'>Step 2: Mistake in factoring signs ✘</div>
+      `;
+      }
+      function submitReflection() {
+        const badge = document.getElementById("reflectionResponse");
+        badge.style.display = "flex";
+      }
+      function showSignOutModal() {
+        document.getElementById("signOutModal").style.display = "block";
+      }
+      function closeSignOutModal() {
+        document.getElementById("signOutModal").style.display = "none";
+      }
+    </script>
+  </body>
+</html>
