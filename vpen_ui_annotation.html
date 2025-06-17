@@ -159,14 +159,12 @@
         <button onclick="analyzeAnnotation()">Save</button>
       </section>
 
-      <section>
-        <h2>Peer Annotation Rewriter</h2>
-        <div class="annotation-box">
-          This equation is important because it helps solve X by...
-        </div>
-        <button onclick="rewriteAnnotation()">Rewrite for Me</button>
-        <div class="annotation-box rewritten" id="rewrittenAnnotation"></div>
-      </section>
+    <section>
+      <h2>Peer Annotation Rewriter</h2>
+      <textarea id="peerInput" value="To solve the system, subtract the second equation from the first and then isolate x.">To solve the system, subtract the second equation from the first and then isolate x.</textarea>
+      <button onclick="rewriteAnnotation()">Rewrite for Me</button>
+      <div class="annotation-box rewritten" id="rewrittenAnnotation"></div>
+    </section>
     </div>
 
     <div class="modal" id="qualityModal">
@@ -213,11 +211,10 @@
         document.getElementById("qualityModal").style.display = "none";
       }
 
-      function rewriteAnnotation() {
-        const rewritten = document.getElementById("rewrittenAnnotation");
-        rewritten.textContent =
-          "This formula is helpful because it allows us to find X efficiently by applying...";
-      }
+    function rewriteAnnotation() {
+      const rewritten = document.getElementById('rewrittenAnnotation');
+      rewritten.textContent = "Start by subtracting the second equation from the first to eliminate one variable. This helps reduce the system to a single equation with one unknown. Then, solve for x by isolating it on one side.";
+    }
       function showSignOutModal() {
         document.getElementById("signOutModal").style.display = "block";
       }
