@@ -31,83 +31,83 @@
         cursor: pointer;
         font-weight: bold;
       }
+      h2 {
+        color: #1a73e8;
+      }
       .container {
         padding: 40px 30px;
         max-width: 1000px;
         margin: 0 auto;
       }
-      section {
-        background-color: white;
-        border-radius: 10px;
-        padding: 20px 30px;
-        margin-bottom: 30px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-      }
-      h2 {
-        color: #1a73e8;
-      }
       textarea {
         width: 100%;
-        min-height: 80px;
-        padding: 10px;
-        margin-top: 10px;
+        padding: 12px;
         border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 16px;
+        margin-bottom: 20px;
+        min-height: 100px;
+      }
+      .button {
+        padding: 10px 20px;
+        margin-top: 15px;
+        border: none;
+        border-radius: 6px;
+        font-weight: bold;
+        background-color: #1a73e8;
+        color: white;
+        cursor: pointer;
+      }
+      .button:hover {
+        background-color: #1558b0;
+      }
+      .solution-step {
+        padding: 15px;
+        margin-top: 10px;
         border-radius: 6px;
         font-size: 15px;
       }
-      button {
-        margin-top: 10px;
-        padding: 10px 16px;
-        background-color: #1a73e8;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        font-weight: 600;
-        cursor: pointer;
+      .correct {
+        background-color: #e6f4ea;
+        border-left: 5px solid #34a853;
       }
-      button:hover {
-        background-color: #1558b0;
+      .incorrect {
+        background-color: #fdecea;
+        border-left: 5px solid #d93025;
       }
       .feedback {
-        margin-top: 10px;
-        padding: 12px;
+        font-style: italic;
+        margin-top: 5px;
+      }
+      .reflection {
+        margin-top: 40px;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 6px;
         border-left: 4px solid #1a73e8;
-        background-color: #e8f0fe;
-        border-radius: 4px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      }
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.4);
+      }
+      .modal-content {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        max-width: 300px;
+        margin: 15% auto;
+        text-align: center;
       }
       .badge {
-        display: none;
-        align-items: center;
-        gap: 10px;
-        margin-top: 16px;
-        background-color: #e6f4ea;
-        padding: 12px 16px;
-        border-radius: 8px;
-        border-left: 4px solid #34a853;
-        animation: fadeIn 0.5s ease-in-out;
-      }
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(10px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-      .steps .step {
-        padding: 10px;
-        border-radius: 6px;
-        margin-top: 10px;
-      }
-      .steps .correct {
-        background-color: #e6f4ea;
-        border-left: 4px solid #34a853;
-      }
-      .steps .incorrect {
-        background-color: #fce8e6;
-        border-left: 4px solid #d93025;
+        font-size: 18px;
+        color: #34a853;
+        margin-top: 15px;
       }
     </style>
   </head>
@@ -125,9 +125,15 @@
     <div class="container">
       <section>
         <h2>Solution Pathway Tracing</h2>
-        <textarea id="solution"></textarea>
-        <button onclick="evaluateSolution()">Evaluate Steps</button>
-        <div class="steps" id="solution-feedback"></div>
+        <textarea id="problemInput">
+2(x - 3) = 4x + 5 → 2x - 6 = 4x + 5 → 2x - 4x = 5 + 6 → -2x = 11 → x = -5.5</textarea
+        >
+        <br />
+        <button class="button" onclick="showSolutionSteps()">
+          Evaluate Steps
+        </button>
+
+        <div id="solutionContainer"></div>
       </section>
       <section>
         <h2>Homework Reflection Bonus</h2>
@@ -141,13 +147,16 @@
             homework?
           </p>
         </div>
-        <textarea placeholder="Enter your reflection..."></textarea>
-        <button onclick="submitReflection()">Submit Reflection</button>
-        <div class="badge" id="reflectionResponse">
-          <span style="font-size: 24px">🏅</span>
-          <div><strong>Reflection Badge</strong><br />+30 XP</div>
-        </div>
+        <textarea placeholder="Enter your reflection...">I initially struggled with distributing the 2 across the expression and combining like terms correctly. I used the strategy of isolating variables and simplifying step-by-step, which helped. After completing the problem, I better understood how to avoid sign errors when moving terms between sides.</textarea>
+        <button class="button"onclick="submitReflection()">Submit Reflection</button>
       </section>
+    </div>
+    <div id="badgeModal" class="modal">
+      <div class="modal-content">
+        <h3>🎉 Reflection Submitted!</h3>
+        <p class="badge">🏅 You earned a Reflection Badge (+30 XP)</p>
+        <button class="button" onclick="closeBadgeModal()">Close</button>
+      </div>
     </div>
 
     <div
@@ -193,9 +202,50 @@
         <div class='step incorrect'>Step 2: Mistake in factoring signs ✘</div>
       `;
       }
+      function showSolutionSteps() {
+        const container = document.getElementById("solutionContainer");
+        container.innerHTML = "";
+        const input = document.getElementById("problemInput").value.trim();
+
+        const parsedSteps = input
+          .split("→")
+          .map((s) => s.trim())
+          .filter(Boolean);
+
+        parsedSteps.forEach((step, index) => {
+          const div = document.createElement("div");
+          div.classList.add("solution-step");
+
+          let feedback = "";
+          let isCorrect = true;
+
+          if (step.includes("2x - 4x = 5 + 6")) {
+            isCorrect = false;
+            feedback =
+              "⚠️ Error: 5 + 6 is incorrect here. You should subtract 5 from both sides.";
+          } else if (step.includes("x = -5.5")) {
+            isCorrect = false;
+            feedback =
+              "❌ Final answer is incorrect because of the earlier mistake in combining terms.";
+          } else if (step.includes("2x - 6 = 4x + 5")) {
+            feedback = "✅ Correct distribution of 2 across the expression.";
+          } else {
+            feedback = "✅ Step appears valid.";
+          }
+
+          div.classList.add(isCorrect ? "correct" : "incorrect");
+          div.innerHTML = `<strong>Step ${
+            index + 1
+          }:</strong> ${step}<div class='feedback'>${feedback}</div>`;
+          container.appendChild(div);
+        });
+      }
       function submitReflection() {
-        const badge = document.getElementById("reflectionResponse");
-        badge.style.display = "flex";
+        document.getElementById("badgeModal").style.display = "block";
+      }
+
+      function closeBadgeModal() {
+        document.getElementById("badgeModal").style.display = "none";
       }
       function showSignOutModal() {
         document.getElementById("signOutModal").style.display = "block";
