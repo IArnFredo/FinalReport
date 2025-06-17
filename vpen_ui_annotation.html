@@ -68,13 +68,6 @@
       button:hover {
         background-color: #1558b0;
       }
-      .feedback {
-        margin-top: 10px;
-        padding: 12px;
-        border-left: 4px solid #1a73e8;
-        background-color: #e8f0fe;
-        border-radius: 4px;
-      }
       .annotation-box,
       .annotation-box.rewritten {
         background-color: #f1f3f4;
@@ -85,35 +78,47 @@
       .annotation-box.rewritten {
         border-left-color: #34a853;
       }
-      /* Modal */
       .modal {
         display: none;
         position: fixed;
-        z-index: 10;
-        left: 0;
         top: 0;
+        left: 0;
         width: 100%;
         height: 100%;
-        overflow: auto;
         background-color: rgba(0, 0, 0, 0.4);
+        z-index: 1000;
       }
       .modal-content {
-        background-color: white;
-        margin: 15% auto;
-        padding: 30px;
+        background-color: #fff;
+        margin: 20% auto;
+        padding: 20px;
         border-radius: 8px;
-        width: 300px;
+        width: 90%;
+        max-width: 400px;
         text-align: center;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        border-left: 5px solid #34a853;
       }
-      .modal-content h4 {
+      .modal-content p {
         margin-bottom: 10px;
+        font-size: 16px;
       }
-      .modal-content button {
-        padding: 8px 14px;
+      .modal-content .label {
+        display: inline-block;
+        padding: 6px 12px;
+        background-color: #34a853;
+        color: white;
+        border-radius: 20px;
+        font-weight: bold;
+      }
+      .modal button {
+        margin-top: 10px;
         background-color: #1a73e8;
         color: white;
         border: none;
-        border-radius: 5px;
+        border-radius: 6px;
+        padding: 8px 16px;
+        font-weight: 600;
         cursor: pointer;
       }
     </style>
@@ -150,41 +155,11 @@
     <div class="container">
       <section>
         <h2>Annotation Quality Analyzer</h2>
-        <textarea
-          id="annotation"
-          placeholder="Write your annotation here..."
-        ></textarea>
-        <button onclick="analyzeAnnotation()">Analyze My Annotation</button>
+        <textarea placeholder="Write your annotation here..."></textarea>
+        <button onclick="analyzeAnnotation()">Save</button>
+      </section>
 
-        <div id="quality-feedback" style="display: none; margin-top: 20px">
-          <div class="feedback">
-            <strong>Relevance:</strong> ✔ Well-connected to the concept.
-          </div>
-          <div class="feedback">
-            <strong>Clarity:</strong> ⚠ Clear but could use simpler phrasing.
-          </div>
-          <div class="feedback">
-            <strong>Depth:</strong> ⚠ Lacks reasoning or example.
-          </div>
-          <div class="feedback">
-            <strong>Accuracy:</strong> ✔ Mathematically correct.
-          </div>
-          <div
-            class="feedback"
-            style="border-left-color: #34a853; background-color: #e6f4ea"
-          >
-            <strong>Overall Rating:</strong>
-            <span
-              style="
-                background-color: #34a853;
-                color: white;
-                padding: 4px 10px;
-                border-radius: 12px;
-              "
-              >Good</span
-            >
-          </div>
-        </div>
+      <section>
         <h2>Peer Annotation Rewriter</h2>
         <div class="annotation-box">
           This equation is important because it helps solve X by...
@@ -193,26 +168,59 @@
         <div class="annotation-box rewritten" id="rewrittenAnnotation"></div>
       </section>
     </div>
-    <div id="signOutModal" class="modal">
+
+    <div class="modal" id="qualityModal">
       <div class="modal-content">
+        <p>Good summary, try explaining why this formula applies here.</p>
+        <div class="label">Good</div>
+        <br /><br />
+        <button onclick="closeQualityModal()">Close</button>
+      </div>
+    </div>
+    <div
+      id="signOutModal"
+      class="modal"
+      style="
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.4);
+      "
+    >
+      <div
+        class="modal-content"
+        style="
+          background: #fff;
+          padding: 20px;
+          border-radius: 8px;
+          max-width: 300px;
+          margin: 20% auto;
+          text-align: center;
+        "
+      >
         <h4>Your account has been signed out.</h4>
         <button onclick="closeSignOutModal()">Close</button>
       </div>
-    </div>
     <script>
       function analyzeAnnotation() {
-        document.getElementById("quality-feedback").style.display = "block";
+        document.getElementById("qualityModal").style.display = "block";
+      }
+
+      function closeQualityModal() {
+        document.getElementById("qualityModal").style.display = "none";
       }
 
       function rewriteAnnotation() {
         const rewritten = document.getElementById("rewrittenAnnotation");
         rewritten.textContent =
           "This formula is helpful because it allows us to find X efficiently by applying...";
-      }      
+      }
       function showSignOutModal() {
         document.getElementById("signOutModal").style.display = "block";
       }
-
       function closeSignOutModal() {
         document.getElementById("signOutModal").style.display = "none";
       }
